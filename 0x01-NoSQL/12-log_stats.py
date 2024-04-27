@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
-"""11 Where can I learn Python?
+"""12 Log stats
 """
+from pymongo import MongoClient
 
+if __name__ == "__main__":
+    nginx_collection = MongoClient().logs.nginx
 
-def schools_by_topic(mongo_collection, topic):
-    """returns the list of school having a specific topic
-    args:
-        @mongo_collection(object): pymongo collection
-        @topic(string): topic
-    return:
-        list
-    """
-    return mongo_collection.find({"topics": topic})
+    print(f"{nginx_collection.count_documents({})} logs")
+
+    print(f"Methods:")
+
+    for method in ["GET", "POST", "PUT", "PATCH", "DELETE"]:
+        count = nginx_collection.count_documents({"method": method})
+        print(f"\tmethod {method}: {count}")
+
+    method_get_count = nginx_collection.count_documents({"method": "GET",
+                                                         "path": "/status"})
+    print(f"{method_get_count} status check")
